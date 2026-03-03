@@ -1,18 +1,30 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Queue;
+import java.util.ArrayDeque;
 
 public class ProcessList {
-    private List<Process> processList;
+    private Queue<Process> processes;
 
     ProcessList(){
-        processList = new ArrayList<>();
+        processes = new ArrayDeque<>();
     }
 
     public void addProcess(Process p){
-        processList.add(p);
+        processes.offer(p);
+    }
+
+    public Process peekNextProcess(){
+        return processes.peek();
+    }
+
+    public Process popNextProcess(){
+        return processes.poll();
+    }
+
+    public boolean hasNextProcess(){
+        return !processes.isEmpty();
     }
 
     public String toString(){
-        return processList.toString();
+        return processes.toString();
     }
 }
