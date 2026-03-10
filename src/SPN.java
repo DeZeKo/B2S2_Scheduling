@@ -5,6 +5,7 @@ public class SPN {
     private long time;
     private Process running;
     private int timeMultiplier;
+    private ResponseRatio responseRatio;
 
     SPN(ProcessList pl) {
         this.processList = pl;
@@ -12,6 +13,7 @@ public class SPN {
         this.prev = System.nanoTime();
         this.timeMultiplier = 1;
         this.running = null;
+        this.responseRatio = new ResponseRatio();
     }
 
     SPN(ProcessList pl, int tm) {
@@ -20,6 +22,7 @@ public class SPN {
         this.prev = System.nanoTime();
         this.timeMultiplier = tm;
         this.running = null;
+        this.responseRatio = new ResponseRatio();
     }
 
     private long getDeltaTime() {
@@ -39,12 +42,22 @@ public class SPN {
 
             while (processList.peekNextProcess() != null &&
                    processList.peekNextProcess().isArrived(this.time)) {
-                queue.addProcess(processList.popNextProcess());
+                Process p = processList.popNextProcess();
+                queue.addProcess(p);
+                responseRatio.markEnqueued(p, this.time);
             }
 
             if (this.running == null || this.running.isFinished()) {
+                if (this.running != null && this.running.isFinished()) {
+                    responseRatio.markFinish(this.running);
+                    System.out.println("Process " + this.running.getProcessID() +
+                            " R = " + responseRatio.getRatioForProcess(this.running.getProcessID()));
+                }
+
                 this.running = queue.getProcess();
+
                 if (this.running != null) {
+                    responseRatio.markDequeued(this.running, this.time);
                     System.out.println(ctr++ + " -> " + this.running);
                 }
             }
@@ -53,5 +66,7 @@ public class SPN {
                 this.running.execute(verschil);
             }
         }
+
+        System.out.println("Mean R = " + responseRatio.getMeanRatio());
     }
 }

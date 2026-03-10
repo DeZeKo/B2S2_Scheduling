@@ -5,6 +5,7 @@ public class SRT {
     private long time;
     private Process running;
     private int timeMultiplier;
+    private ResponseRatio responseRatio;
 
     SRT(ProcessList pl) {
         this.processList = pl;
@@ -12,6 +13,7 @@ public class SRT {
         this.prev = System.nanoTime();
         this.timeMultiplier = 1;
         this.running = null;
+        this.responseRatio = new ResponseRatio();
     }
 
     SRT(ProcessList pl, int tm) {
@@ -20,6 +22,7 @@ public class SRT {
         this.prev = System.nanoTime();
         this.timeMultiplier = tm;
         this.running = null;
+        this.responseRatio = new ResponseRatio();
     }
 
     private long getDeltaTime() {
@@ -37,39 +40,45 @@ public class SRT {
             long verschil = getDeltaTime();
             this.time += verschil;
 
-            // First run current process for elapsed time
             if (this.running != null) {
                 this.running.execute(verschil);
             }
 
-            // If finished, remove it
             if (this.running != null && this.running.isFinished()) {
+                responseRatio.markFinish(this.running);
+                System.out.println("Process " + this.running.getProcessID() +
+                        " R = " + responseRatio.getRatioForProcess(this.running.getProcessID()));
                 this.running = null;
             }
 
-            // Add newly arrived processes
             while (processList.peekNextProcess() != null &&
                    processList.peekNextProcess().isArrived(this.time)) {
-                queue.addProcess(processList.popNextProcess());
+                Process p = processList.popNextProcess();
+                queue.addProcess(p);
+                responseRatio.markEnqueued(p, this.time);
             }
 
-            // If nothing is running, pick next
             if (this.running == null) {
                 this.running = queue.getProcess();
                 if (this.running != null) {
+                    responseRatio.markDequeued(this.running, this.time);
                     System.out.println(ctr++ + " -> " + this.running);
                 }
-            }
-            // If something is running, check preemption
-            else if (!queue.isEmpty()) {
+            } else if (!queue.isEmpty()) {
                 Process shortest = queue.peekProcess();
 
                 if (shortest.getRemainingTime() < this.running.getRemainingTime()) {
-                    queue.addProcess(this.running);     // put current back
-                    this.running = queue.getProcess();  // take shortest
+                    queue.addProcess(this.running);
+                    responseRatio.markEnqueued(this.running, this.time);
+
+                    this.running = queue.getProcess();
+                    responseRatio.markDequeued(this.running, this.time);
+
                     System.out.println(ctr++ + " -> " + this.running);
                 }
             }
         }
+
+        System.out.println("Mean R = " + responseRatio.getMeanRatio());
     }
 }

@@ -3,8 +3,8 @@ public class Main {
         ProcessReader pr = new ProcessReader("processen10000.xml");
         try {
             ProcessList pl = pr.read();
-            FCFS fcfs = new FCFS(pl);
-            fcfs.excecute();
+            SRT srt = new SRT(pl);
+            srt.execute();
         }
         catch (Exception e){
             System.out.println(e.getMessage());
