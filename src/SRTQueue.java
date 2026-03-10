@@ -2,7 +2,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class SRTQueue {
-    private Queue<Process> processes;
+    private final Queue<Process> processes;
 
     SRTQueue() {
         processes = new PriorityQueue<>(
@@ -34,6 +34,7 @@ public class SRTQueue {
         return processes.isEmpty();
     }
 
+    @Override
     public String toString() {
         return processes.toString();
     }

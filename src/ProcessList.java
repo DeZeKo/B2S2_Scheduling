@@ -8,6 +8,10 @@ public class ProcessList {
         processes = new ArrayDeque<>();
     }
 
+    ProcessList(ProcessList pl) {
+        processes = new ArrayDeque<>(pl.processes);
+    }
+
     public void addProcess(Process p){
         processes.offer(p);
     }

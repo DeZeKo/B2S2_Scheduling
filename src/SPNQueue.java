@@ -2,7 +2,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class SPNQueue {
-    private Queue<Process> processes;
+    private final Queue<Process> processes;
 
     SPNQueue() {
         processes = new PriorityQueue<>(
@@ -30,6 +30,7 @@ public class SPNQueue {
         return processes.isEmpty();
     }
 
+    @Override
     public String toString() {
         return processes.toString();
     }

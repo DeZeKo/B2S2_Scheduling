@@ -2,9 +2,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseRatio {
-    private Map<Integer, Long> waitingSince;
-    private Map<Integer, Long> totalWaitingTime;
-    private Map<Integer, Double> ratios;
+    private final Map<Integer, Long> waitingSince;
+    private final Map<Integer, Long> totalWaitingTime;
+    private final Map<Integer, Double> ratios;
     private double totalRatio;
     private int finishedProcesses;
 
