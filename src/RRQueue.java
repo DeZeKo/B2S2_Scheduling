@@ -1,10 +1,10 @@
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class FCFSQueue {
+public class RRQueue {
     private final Queue<Process> queue;
 
-    FCFSQueue(){
+    RRQueue(){
         this.queue = new LinkedList<>();
     }
 

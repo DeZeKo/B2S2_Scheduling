@@ -1,14 +1,12 @@
+import java.io.File;
+import static java.lang.Integer.parseInt;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.io.File;
-
-import static java.lang.Integer.parseInt;
-
 public class ProcessReader {
-    private String filename;
+    private final String filename;
     ProcessReader(String filename){
         this.filename = filename;
     }

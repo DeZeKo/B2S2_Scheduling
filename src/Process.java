@@ -1,7 +1,7 @@
 public class Process {
-    private int processID;
-    private int arrivalTime;
-    private int serviceTime;
+    private final int processID;
+    private final int arrivalTime;
+    private final int serviceTime;
     private long runningTime;
 
     Process(int pid, int at, int st){
@@ -43,6 +43,7 @@ public class Process {
         return this.runningTime >= this.serviceTime;
     }
 
+    @Override
     public String toString(){
         return "Process(pid=" + processID + ", at=" + arrivalTime + ", st=" + serviceTime + ")";
     }

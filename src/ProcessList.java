@@ -1,8 +1,8 @@
-import java.util.Queue;
 import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class ProcessList {
-    private Queue<Process> processes;
+    private final Queue<Process> processes;
 
     ProcessList(){
         processes = new ArrayDeque<>();
@@ -24,6 +24,7 @@ public class ProcessList {
         return !processes.isEmpty();
     }
 
+    @Override
     public String toString(){
         return processes.toString();
     }
