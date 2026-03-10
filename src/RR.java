@@ -4,7 +4,7 @@ public class RR {
     private final int quantum;
     private long time;
     private Process running;
-    private ResponseRatio responseRatio;
+    private final ResponseRatio responseRatio;
 
     RR(ProcessList pl, int q){
         this.processList = pl;

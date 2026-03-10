@@ -10,6 +10,13 @@ public class Process {
         this.serviceTime = st;
         this.runningTime = 0;
     }
+    
+    Process(Process other){
+        this.processID = other.processID;
+        this.arrivalTime = other.arrivalTime;
+        this.serviceTime = other.serviceTime;
+        this.runningTime = 0;
+    }
 
     public int getProcessID() {
         return processID;

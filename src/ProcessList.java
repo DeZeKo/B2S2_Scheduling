@@ -9,7 +9,10 @@ public class ProcessList {
     }
 
     ProcessList(ProcessList pl) {
-        processes = new ArrayDeque<>(pl.processes);
+        processes = new ArrayDeque<>();
+        for (Process p : pl.processes) {
+            processes.offer(new Process(p));
+        }
     }
 
     public void addProcess(Process p){
