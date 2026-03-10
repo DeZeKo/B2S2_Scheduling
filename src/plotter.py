@@ -7,12 +7,12 @@ frames: dict[str, pd.DataFrame] = {}
 avg_frames: dict[str, pd.DataFrame] = {}
 
 # Load CSVs
-frames["fcfs"] = pd.read_csv("fcfs.csv")
-frames["rr2"] = pd.read_csv("rr2.csv")
-frames["rr4"] = pd.read_csv("rr4.csv")
-frames["rr8"] = pd.read_csv("rr8.csv")
-frames["spn"] = pd.read_csv("spn.csv")
-frames["srt"] = pd.read_csv("srt.csv")
+frames["fcfs"] = pd.read_csv("../raw_output/fcfs.csv")
+frames["rr2"] = pd.read_csv("../raw_output/rr2.csv")
+frames["rr4"] = pd.read_csv("../raw_output/rr4.csv")
+frames["rr8"] = pd.read_csv("../raw_output/rr8.csv")
+frames["spn"] = pd.read_csv("../raw_output/spn.csv")
+frames["srt"] = pd.read_csv("../raw_output/srt.csv")
 
 for key, df in frames.items():
     # Calculations

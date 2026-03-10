@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("--Simulating...--");
 
-        ProcessReader pr = new ProcessReader("processen50000.xml");
+        ProcessReader pr = new ProcessReader("data_sets/processen50000.xml");
         try {
             ProcessList pl = pr.read();
 
@@ -22,22 +22,22 @@ public class Main {
             spn.execute();
             srt.execute();
 
-            try (FileWriter writer = new FileWriter("fcfs.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/fcfs.csv")) {
                 writer.write(fcfs.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("rr2.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/rr2.csv")) {
                 writer.write(rr2.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("rr4.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/rr4.csv")) {
                 writer.write(rr4.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("rr8.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/rr8.csv")) {
                 writer.write(rr8.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("spn.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/spn.csv")) {
                 writer.write(spn.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("srt.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/srt.csv")) {
                 writer.write(srt.resultAsCSV());
             }
         }
