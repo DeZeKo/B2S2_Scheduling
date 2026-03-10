@@ -1,48 +1,49 @@
 public class FCFS {
     private final ProcessList processList;
+    private final ProcessList finished;
     private final FCFSQueue queue;
     private long time;
     private Process running;
-    private final ResponseRatio responseRatio;
     
     FCFS(ProcessList pl){
-        this.processList = pl;
-        this.queue = new FCFSQueue();
-        this.running = null;
-        this.responseRatio = new ResponseRatio();
+        processList = pl;
+        finished = new ProcessList();
+
+        queue = new FCFSQueue();
+        running = null;
     }
 
-    public void execute(){
-        this.time = 0;
+    public String resultAsCSV() {
+        return finished.toCSV();
+    }
 
-        while (processList.hasNextProcess() || !queue.isEmpty() || this.running != null) {
-            this.time += 1;
+    public void execute() {
+        time = 0;
 
-            while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(this.time)){
-                Process p = processList.popNextProcess();
-                queue.addProcess(p);
-                responseRatio.markEnqueued(p, this.time);
+        while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
+
+            // 1. New arrivals
+
+            while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)){
+                queue.addProcess(processList.popNextProcess());
             }
 
-            if (this.running == null || this.running.isFinished()){
-                if (this.running != null && this.running.isFinished()) {
-                    responseRatio.markFinish(this.running);
-                    // System.out.println("Process " + this.running.getProcessID() +
-                    //         " R = " + responseRatio.getRatioForProcess(this.running.getProcessID()));
-                }
+            // 2. Select next process
 
-                this.running = this.queue.getProcess();
-
-                if (this.running != null) {
-                    responseRatio.markDequeued(this.running, this.time);
+            if (running == null || running.isFinished()){
+                if (running != null) {
+                    running.setFinishTime(time);
+                    finished.addProcess(running);
                 }
+                running = queue.getProcess();
             }
 
-            if (this.running != null) {
-                this.running.execute(1);
+            // 3. Execute
+            
+            time += 1;
+            if (running != null) {
+                running.execute(1);
             }
         }
-
-        System.out.println("FCFS: Mean R = " + responseRatio.getMeanRatio());
     }
 }

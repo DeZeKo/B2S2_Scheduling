@@ -1,6 +1,10 @@
+import java.io.FileWriter;
+
 public class Main {
     public static void main(String[] args) {
-        ProcessReader pr = new ProcessReader("processen10000.xml");
+        System.out.println("--Simulating...--");
+
+        ProcessReader pr = new ProcessReader("processen50000.xml");
         try {
             ProcessList pl = pr.read();
 
@@ -17,10 +21,30 @@ public class Main {
             rr8.execute();
             spn.execute();
             srt.execute();
+
+            try (FileWriter writer = new FileWriter("fcfs.csv")) {
+                writer.write(fcfs.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("rr2.csv")) {
+                writer.write(rr2.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("rr4.csv")) {
+                writer.write(rr4.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("rr8.csv")) {
+                writer.write(rr8.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("spn.csv")) {
+                writer.write(spn.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("srt.csv")) {
+                writer.write(srt.resultAsCSV());
+            }
         }
         catch (Exception e){
             System.out.println(e.getMessage());
         }
-        
+
+        System.out.println("--Finished--");
     }
 }

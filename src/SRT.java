@@ -1,59 +1,58 @@
 public class SRT {
     private final ProcessList processList;
+    private final ProcessList finished;
+
     private final SRTQueue queue;
     private long time;
     private Process running;
-    private final ResponseRatio responseRatio;
 
     SRT(ProcessList pl) {
         this.processList = pl;
+        finished = new ProcessList();
+
         this.queue = new SRTQueue();
         this.running = null;
-        this.responseRatio = new ResponseRatio();
+    }
+
+    public String resultAsCSV() {
+        return finished.toCSV();
     }
 
     public void execute() {
-        this.time = 0;
+        time = 0;
 
-        while (processList.hasNextProcess() || !queue.isEmpty() || this.running != null) {
-            this.time += 1;
+        while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
+            
+            // 1. New arrivals
 
-            if (this.running != null) {
-                this.running.execute(1);
+            while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)) {
+                queue.addProcess(processList.popNextProcess());
             }
 
-            if (this.running != null && this.running.isFinished()) {
-                responseRatio.markFinish(this.running);
-                // System.out.println("Process " + this.running.getProcessID() +
-                //         " R = " + responseRatio.getRatioForProcess(this.running.getProcessID()));
-                this.running = null;
+            // 2. Select next process
+
+            if (running != null && running.isFinished()) {
+                running.setFinishTime(time);
+                finished.addProcess(running);
+                running = null;
             }
 
-            while (processList.peekNextProcess() != null &&
-                   processList.peekNextProcess().isArrived(this.time)) {
-                Process p = processList.popNextProcess();
-                queue.addProcess(p);
-                responseRatio.markEnqueued(p, this.time);
-            }
-
-            if (this.running == null) {
-                this.running = queue.getProcess();
-                if (this.running != null) {
-                    responseRatio.markDequeued(this.running, this.time);
-                }
+            if (running == null) {
+                running = queue.getProcess();
             } else if (!queue.isEmpty()) {
                 Process shortest = queue.peekProcess();
-
-                if (shortest.getRemainingTime() < this.running.getRemainingTime()) {
-                    queue.addProcess(this.running);
-                    responseRatio.markEnqueued(this.running, this.time);
-
-                    this.running = queue.getProcess();
-                    responseRatio.markDequeued(this.running, this.time);
+                if (shortest.getRemainingTime() < running.getRemainingTime()) {
+                    queue.addProcess(running);
+                    running = queue.getProcess();
                 }
             }
-        }
 
-        System.out.println("SRT: Mean R = " + responseRatio.getMeanRatio());
+            // 3. Execute
+            
+            time += 1;
+            if (running != null) {
+                running.execute(1);
+            }
+        }
     }
 }

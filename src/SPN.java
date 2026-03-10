@@ -1,49 +1,50 @@
 public class SPN {
     private final ProcessList processList;
+    private final ProcessList finished;
+
     private final SPNQueue queue;
     private long time;
     private Process running;
-    private final ResponseRatio responseRatio;
 
     SPN(ProcessList pl) {
-        this.processList = pl;
-        this.queue = new SPNQueue();
-        this.running = null;
-        this.responseRatio = new ResponseRatio();
+        processList = pl;
+        finished = new ProcessList();
+
+        queue = new SPNQueue();
+        running = null;
+    }
+
+    public String resultAsCSV() {
+        return finished.toCSV();
     }
 
     public void execute() {
-        this.time = 0;
+        time = 0;
 
-        while (processList.hasNextProcess() || !queue.isEmpty() || this.running != null) {
-            this.time += 1;
+        while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
 
-            while (processList.peekNextProcess() != null &&
-                   processList.peekNextProcess().isArrived(this.time)) {
-                Process p = processList.popNextProcess();
-                queue.addProcess(p);
-                responseRatio.markEnqueued(p, this.time);
+            // 1. New arrivals
+
+            while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)) {
+                queue.addProcess(processList.popNextProcess());
             }
 
-            if (this.running == null || this.running.isFinished()) {
-                if (this.running != null && this.running.isFinished()) {
-                    responseRatio.markFinish(this.running);
-                    // System.out.println("Process " + this.running.getProcessID() +
-                    //         " R = " + responseRatio.getRatioForProcess(this.running.getProcessID()));
-                }
+            // 2. Select next process
 
-                this.running = queue.getProcess();
-
-                if (this.running != null) {
-                    responseRatio.markDequeued(this.running, this.time);
+            if (running == null || running.isFinished()) {
+                if (running != null) {
+                    running.setFinishTime(time);
+                    finished.addProcess(running);
                 }
+                running = queue.getProcess();
             }
 
-            if (this.running != null) {
-                this.running.execute(1);
+            // 3. Execute
+            
+            time += 1;
+            if (running != null) {
+                running.execute(1);
             }
         }
-
-        System.out.println("SPN: Mean R = " + responseRatio.getMeanRatio());
     }
 }

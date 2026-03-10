@@ -3,12 +3,14 @@ public class Process {
     private final int arrivalTime;
     private final int serviceTime;
     private long runningTime;
+    private long finishTime;
 
     Process(int pid, int at, int st){
         this.processID = pid;
         this.arrivalTime = at;
         this.serviceTime = st;
         this.runningTime = 0;
+        this.finishTime = -1;
     }
     
     Process(Process other){
@@ -34,20 +36,28 @@ public class Process {
         return runningTime;
     }
 
+    public void setFinishTime(long time) {
+        this.finishTime = time;
+    }
+
     public long getRemainingTime() {
         return serviceTime - runningTime;
     }
 
-    public boolean isArrived(long time){
+    public boolean isArrived(long time) {
         return time >= arrivalTime;
     }
 
-    public void execute(long time){
+    public void execute(long time) {
         this.runningTime += time;
     }
 
-    public boolean isFinished(){
+    public boolean isFinished() {
         return this.runningTime >= this.serviceTime;
+    }
+
+    public String toCSV() {
+        return processID + "," + arrivalTime + "," + serviceTime + "," + finishTime;
     }
 
     @Override

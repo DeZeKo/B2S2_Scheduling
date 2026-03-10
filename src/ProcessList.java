@@ -31,6 +31,19 @@ public class ProcessList {
         return !processes.isEmpty();
     }
 
+    public String toCSV() {
+        StringBuilder sb = new StringBuilder();
+        String sep = System.lineSeparator();
+
+        sb.append("id,ta,ts,tf").append(sep);  // id, arrivalTime, serviceTime, finishTime
+
+        for (Process p: processes) {
+            sb.append(p.toCSV()).append(sep);
+        }
+
+        return sb.toString();
+    }
+
     @Override
     public String toString(){
         return processes.toString();
