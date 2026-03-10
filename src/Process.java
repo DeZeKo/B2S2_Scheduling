@@ -15,7 +15,7 @@ public class Process {
         return time >= arrivalTime;
     }
 
-    public void running(long time){
+    public void execute(long time){
         this.runningTime += time;
     }
 

@@ -3,7 +3,7 @@ public class Main {
         ProcessReader pr = new ProcessReader("processen10000.xml");
         try {
             ProcessList pl = pr.read();
-            FCFS fcfs = new FCFS(pl, 500);
+            FCFS fcfs = new FCFS(pl);
             fcfs.excecute();
         }
         catch (Exception e){

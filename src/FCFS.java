@@ -24,23 +24,29 @@ public class FCFS {
 
     private long getDeltaTime(){
         long now = System.nanoTime();
-        long deltaMicros = (now - prev) / 1_000L / this.timeMultiplier;  // integer microseconds
-        prev = now;
+        long deltaMicros = (now - this.prev) / 1_000L / this.timeMultiplier;  // integer microseconds
+        this.prev = now;
         return deltaMicros;
     }
 
     public void excecute(){
+        int ctr = 0;
         this.time = 0;
-        while (true) {
+        while (processList.hasNextProcess() || !queue.isEmpty() || this.running != null) {
             long verschil = getDeltaTime();
             this.time += verschil;
-            while (processList.peekNextProcess().isArrived(this.time)){
+            while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(this.time)){
                 queue.addProcess(processList.popNextProcess());
             }
             if (this.running == null || this.running.isFinished()){
                 this.running = this.queue.getProcess();
+                if (this.running != null) {
+                    System.out.println(ctr++);
+                }
             }
-            this.running.running(verschil);
+            if (this.running != null) {
+                this.running.execute(verschil);
+            }
         }
     }
 }
