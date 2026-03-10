@@ -11,6 +11,26 @@ public class Process {
         this.runningTime = 0;
     }
 
+    public int getProcessID() {
+        return processID;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public int getServiceTime() {
+        return serviceTime;
+    }
+
+    public long getRunningTime() {
+        return runningTime;
+    }
+
+    public long getRemainingTime() {
+        return serviceTime - runningTime;
+    }
+
     public boolean isArrived(long time){
         return time >= arrivalTime;
     }
@@ -20,7 +40,7 @@ public class Process {
     }
 
     public boolean isFinished(){
-        return this.runningTime > this.serviceTime;
+        return this.runningTime >= this.serviceTime;
     }
 
     public String toString(){
