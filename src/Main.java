@@ -14,6 +14,9 @@ public class Main {
             RR rr8 = new RR(new ProcessList(pl), 8);
             SPN spn = new SPN(new ProcessList(pl));
             SRT srt = new SRT(new ProcessList(pl));
+            HRRN hrrn = new HRRN(new ProcessList(pl));
+            MLFB mlfb1 = new MLFB(new ProcessList(pl), new int[]{1, 2, 4, 8, 16});
+            MLFB mlfb2 = new MLFB(new ProcessList(pl), new int[]{2, 4, 8, 16, 32});
 
             fcfs.execute();
             rr2.execute();
@@ -21,6 +24,9 @@ public class Main {
             rr8.execute();
             spn.execute();
             srt.execute();
+            hrrn.execute();
+            mlfb1.execute();
+            mlfb2.execute();
 
             try (FileWriter writer = new FileWriter("raw_output/fcfs.csv")) {
                 writer.write(fcfs.resultAsCSV());
@@ -39,6 +45,15 @@ public class Main {
             }
             try (FileWriter writer = new FileWriter("raw_output/srt.csv")) {
                 writer.write(srt.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("raw_output/hrrn.csv")) {
+                writer.write(hrrn.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("raw_output/mlfb1.csv")) {
+                writer.write(mlfb1.resultAsCSV());
+            }
+            try (FileWriter writer = new FileWriter("raw_output/mlfb2.csv")) {
+                writer.write(mlfb2.resultAsCSV());
             }
         }
         catch (Exception e){

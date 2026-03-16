@@ -13,6 +13,9 @@ frames["rr4"] = pd.read_csv("../raw_output/rr4.csv")
 frames["rr8"] = pd.read_csv("../raw_output/rr8.csv")
 frames["spn"] = pd.read_csv("../raw_output/spn.csv")
 frames["srt"] = pd.read_csv("../raw_output/srt.csv")
+frames["hrrn"] = pd.read_csv("../raw_output/hrrn.csv")
+frames["mlfb1"] = pd.read_csv("../raw_output/mlfb1.csv")
+frames["mlfb2"] = pd.read_csv("../raw_output/mlfb2.csv")
 
 for key, df in frames.items():
     # Calculations
