@@ -30,10 +30,10 @@
 \usepackage[font=small,labelfont=bf]{caption}
 
 \title{\textbf{Simulation of Process Scheduling Algorithms}\\[0.5em]
-Operating Systems 1 -- Subproject 1}
+Operating Systems 1 -- Scheduling}
 \author{
-    Student 1 Name \and
-    Student 2 Name
+    Decalf Kobe \and
+    Zenn De Craene
 }
 \date{\today}
 
@@ -43,12 +43,9 @@ Operating Systems 1 -- Subproject 1}
 
 \vspace{-1em}
 \begin{abstract}
-This report presents a simulation-based evaluation of several CPU scheduling
-algorithms: FCFS, RR, SPN, SRT, HRRN, and MLFB. We compare their performance
-on the provided datasets using average turnaround time (TAT), normalized turnaround
-time (nTAT), waiting time ($T_w$), and percentile-based graphs. We also motivate
-our chosen MLFB parameters and compare the observed behaviour with the theoretical
-results from the lecture material.
+In this report, we will present our findings achieved by creating and simulating different scheduling algorithms. 
+We implemented FCFS, RR, SPN, SRT, HRRN and MLFB. The metrics for performance are turnaround time (TAT), normalized TAT and average waiting time.
+The chosen parameters for MLFB will also be justified.
 \end{abstract}
 
 \section{Experimental Setup}
@@ -63,7 +60,7 @@ We implemented the following scheduling algorithms:
     \item Shortest Process Next (SPN)
     \item Shortest Remaining Time (SRT)
     \item Highest Response Ratio Next (HRRN)
-    \item Multi-Level Feedback (MLFB) with 5 levels
+    \item 2 versions of Multi-Level Feedback (MLFB) with 5 levels
 \end{itemize}
 
 \subsection{Datasets}
@@ -99,23 +96,14 @@ where each point represents the arithmetic mean over one percentile of service t
 \section{Design and Implementation}
 
 \subsection{Simulator Structure}
-Briefly describe the structure of your simulator:
-\begin{itemize}[leftmargin=1.5em]
-    \item how XML input is parsed,
-    \item how processes are represented,
-    \item how time progression is simulated,
-    \item how scheduling decisions are made,
-    \item how statistics are collected.
-\end{itemize}
-
-\subsection{Assumptions and Design Choices}
-Mention any relevant implementation decisions, for example:
-\begin{itemize}[leftmargin=1.5em]
-    \item tie-breaking rules,
-    \item ready queue data structures,
-    \item treatment of arrivals at the same time,
-    \item exact interpretation of one jiffy and rescheduling moments.
-\end{itemize}
+The fundamental part of our simulator is a Process, multiple processes are stored in a ProcessList
+For reading in the XML input we use a class called ProcessReader, this will return a ProcessList
+Then, for each different algorithm, we have a queue and an excecuter. The excecuter follows the same 3 steps for each different algorithm.
+First, it looks for new arrivals, then it selects a next process if necessary and lastly, it executes the current process.
+The queue stores all the arrived processes and the logic for selecting the next process is also found here.
+Time progression is very simple, every time the loop gets excecuted, it represents one jiffy.
+All statistics are stored in the Process itself, which means the processes are stored in a csv file and used for evaluation later.
+We used python (matplotlib) to render the graphs.
 
 \section{MLFB Configuration}
 
@@ -159,32 +147,35 @@ Insert the global averages for each algorithm and dataset.
         \toprule
         Dataset & Algorithm & Avg.\ TAT & Avg.\ nTAT & Avg.\ $T_w$ \\
         \midrule
-        10000 & FCFS   &  &  &  \\
-        10000 & RR-2   &  &  &  \\
-        10000 & RR-4   &  &  &  \\
-        10000 & RR-8   &  &  &  \\
-        10000 & SPN    &  &  &  \\
-        10000 & SRT    &  &  &  \\
-        10000 & HRRN   &  &  &  \\
-        10000 & MLFB   &  &  &  \\
+        10000 & FCFS   & 540.66 & 26.94 & 441.01 \\
+        10000 & RR-2   & 542.72 & 5.54 & 443.07 \\
+        10000 & RR-4   & 542.64 & 5.80 & 442.99 \\
+        10000 & RR-8   & 542.74 & 6.40 & 443.09 \\
+        10000 & SPN    & 301.58 & 6.27 & 201.93 \\
+        10000 & SRT    & 246.54 & 1.62 & 146.90 \\
+        10000 & HRRN   & 375.74 & 7.71 & 276.09 \\
+        10000 & MLFB1  & 542.91 & 4.64 & 443.26 \\
+        10000 & MLFB2  & 546.33 & 4.30 & 446.68 \\
         \midrule
-        20000 & FCFS   &  &  &  \\
-        20000 & RR-2   &  &  &  \\
-        20000 & RR-4   &  &  &  \\
-        20000 & RR-8   &  &  &  \\
-        20000 & SPN    &  &  &  \\
-        20000 & SRT    &  &  &  \\
-        20000 & HRRN   &  &  &  \\
-        20000 & MLFB   &  &  &  \\
+        20000 & FCFS   & 536.42 & 22.97 & 435.64 \\
+        20000 & RR-2   & 544.03 & 5.39 & 443.25 \\
+        20000 & RR-4   & 543.93 & 5.60 & 443.15 \\
+        20000 & RR-8   & 543.67 & 6.06 & 442.89 \\
+        20000 & SPN    & 297.24 & 5.70 & 196.46 \\
+        20000 & SRT    & 246.98 & 1.61 & 146.20 \\
+        20000 & HRRN   & 373.03 & 7.12 & 272.25 \\
+        20000 & MLFB1  & 545.42 & 4.61 & 444.64 \\
+        20000 & MLFB2  & 545.94 & 4.25 & 445.16 \\
         \midrule
-        50000 & FCFS   &  &  &  \\
-        50000 & RR-2   &  &  &  \\
-        50000 & RR-4   &  &  &  \\
-        50000 & RR-8   &  &  &  \\
-        50000 & SPN    &  &  &  \\
-        50000 & SRT    &  &  &  \\
-        50000 & HRRN   &  &  &  \\
-        50000 & MLFB   &  &  &  \\
+        50000 & FCFS   & 505.33 & 23.26 & 405.80 \\
+        50000 & RR-2   & 498.41 & 5.08 & 398.89 \\
+        50000 & RR-4   & 498.50 & 5.30 & 398.98 \\
+        50000 & RR-8   & 498.57 & 5.76 & 399.05 \\
+        50000 & SPN    & 289.58 & 5.85 & 190.06 \\
+        50000 & SRT    & 235.85 & 1.58 & 136.32 \\
+        50000 & HRRN   & 353.07 & 7.26 & 253.54 \\
+        50000 & MLFB1  & 497.94 & 4.29 & 398.41 \\
+        50000 & MLFB2  & 497.62 & 3.95 & 398.09 \\
         \bottomrule
     \end{tabular}
     \caption{Global measurements for all algorithms and datasets.}
@@ -193,34 +184,34 @@ Insert the global averages for each algorithm and dataset.
 
 \subsection{Graphs for Selected Datasets}
 
-\subsubsection{Dataset X}
+\subsubsection{Dataset 10000}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/datasetX_ntat.png}
-    \caption{$nTAT(T_s)$ for Dataset X.}
-    \label{fig:datasetX-ntat}
+    \includegraphics[width=0.8\textwidth]{graphs/data1_ntat.png}
+    \caption{$nTAT(T_s)$ for Dataset 10000.}
+    \label{fig:dataset1-ntat}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/datasetX_tw.png}
-    \caption{$T_w(T_s)$ for Dataset X.}
-    \label{fig:datasetX-tw}
+    \includegraphics[width=0.8\textwidth]{graphs/data1_tw.png}
+    \caption{$T_w(T_s)$ for Dataset 10000.}
+    \label{fig:dataset1-tw}
 \end{figure}
 
-\subsubsection{Dataset Y}
+\subsubsection{Dataset 50000}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/datasetY_ntat.png}
-    \caption{$nTAT(T_s)$ for Dataset Y.}
-    \label{fig:datasetY-ntat}
+    \includegraphics[width=0.8\textwidth]{graphs/data5_ntat.png}
+    \caption{$nTAT(T_s)$ for Dataset 50000.}
+    \label{fig:dataset5-ntat}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/datasetY_tw.png}
-    \caption{$T_w(T_s)$ for Dataset Y.}
-    \label{fig:datasetY-tw}
+    \includegraphics[width=0.8\textwidth]{graphs/data5_tw.png}
+    \caption{$T_w(T_s)$ for Dataset 50000.}
+    \label{fig:dataset5-tw}
 \end{figure}
 
 \section{Evaluation and Comparison}
@@ -290,10 +281,5 @@ Summarize the most important findings in a few paragraphs. Keep this section foc
     \item impact of RR quantum,
     \item lessons learned from MLFB.
 \end{itemize}
-
-% Optional
-\section*{Appendix (Optional)}
-Use this only if really necessary, for example for a small extra table or a short note
-on implementation details. Do not include source code.
 
 \end{document}
