@@ -28,31 +28,31 @@ public class Main {
             mlfb1.execute();
             mlfb2.execute();
 
-            try (FileWriter writer = new FileWriter("raw_output/fcfs.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/FCFS.csv")) {
                 writer.write(fcfs.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/rr2.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/RR2.csv")) {
                 writer.write(rr2.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/rr4.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/RR4.csv")) {
                 writer.write(rr4.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/rr8.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/RR8.csv")) {
                 writer.write(rr8.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/spn.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/SPN.csv")) {
                 writer.write(spn.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/srt.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/SRT.csv")) {
                 writer.write(srt.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/hrrn.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/HRRN.csv")) {
                 writer.write(hrrn.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/mlfb1.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/MLFB1.csv")) {
                 writer.write(mlfb1.resultAsCSV());
             }
-            try (FileWriter writer = new FileWriter("raw_output/mlfb2.csv")) {
+            try (FileWriter writer = new FileWriter("raw_output/MLFB2.csv")) {
                 writer.write(mlfb2.resultAsCSV());
             }
         }

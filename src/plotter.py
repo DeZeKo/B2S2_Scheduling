@@ -1,21 +1,23 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage import gaussian_filter1d
+from scipy.signal import savgol_filter
+from statsmodels.nonparametric.smoothers_lowess import lowess
+
 
 frames: dict[str, pd.DataFrame] = {}
 avg_frames: dict[str, pd.DataFrame] = {}
 
 # Load CSVs
-frames["fcfs"] = pd.read_csv("../raw_output/fcfs.csv")
-frames["rr2"] = pd.read_csv("../raw_output/rr2.csv")
-frames["rr4"] = pd.read_csv("../raw_output/rr4.csv")
-frames["rr8"] = pd.read_csv("../raw_output/rr8.csv")
-frames["spn"] = pd.read_csv("../raw_output/spn.csv")
-frames["srt"] = pd.read_csv("../raw_output/srt.csv")
-frames["hrrn"] = pd.read_csv("../raw_output/hrrn.csv")
-frames["mlfb1"] = pd.read_csv("../raw_output/mlfb1.csv")
-frames["mlfb2"] = pd.read_csv("../raw_output/mlfb2.csv")
+frames["FCFS"] = pd.read_csv("../raw_output/FCFS.csv")
+frames["RR2"] = pd.read_csv("../raw_output/RR2.csv")
+frames["RR4"] = pd.read_csv("../raw_output/RR4.csv")
+frames["RR8"] = pd.read_csv("../raw_output/RR8.csv")
+frames["SPN"] = pd.read_csv("../raw_output/SPN.csv")
+frames["SRT"] = pd.read_csv("../raw_output/SRT.csv")
+frames["HRRN"] = pd.read_csv("../raw_output/HRRN.csv")
+frames["MLFB1"] = pd.read_csv("../raw_output/MLFB1.csv")
+frames["MLFB2"] = pd.read_csv("../raw_output/MLFB2.csv")
 
 for key, df in frames.items():
     # Calculations
@@ -36,7 +38,7 @@ for key, df in frames.items():
 
 # Plotting
 for key, df in avg_frames.items():
-    plt.plot(df["percentile"], df["ntat"], marker='', label=key)
+    plt.plot(df["percentile"], df["ntat"], marker="", label=key)
 
 plt.xlabel("Percentile of time required")
 plt.ylabel("Normalized turnaround time")
@@ -56,7 +58,7 @@ for key, df in avg_frames.items():
     y = y[sorted_idx]
 
     # Apply Gaussian smoothing to y-values
-    y_smooth = gaussian_filter1d(y, sigma=2)  # adjust sigma for smoothness
+    y_smooth = savgol_filter(y, window_length=7, polyorder=3)
 
     plt.plot(x, y_smooth, label=key)
 
@@ -68,10 +70,27 @@ plt.grid(True, which="both", linestyle="--")
 plt.legend()
 plt.show()
 
-# plt.plot(avg["ts"], avg["tw"], marker='s', color='red', label='TW')
-# plt.xlabel("Time Slice (ts)")
-# plt.ylabel("Average Waiting Time (TW)")
-# plt.title("TW vs Time Slice")
-# plt.grid(True)
-# plt.legend()
-# plt.show()
+for key, df in avg_frames.items():
+    x = df["percentile"].to_numpy()
+    y = df["ntat"].to_numpy()
+
+    smooth = lowess(y, x, frac=0.09)  # 0.1–0.3 typical
+    plt.plot(smooth[:, 0], smooth[:, 1], label=key)
+
+plt.xlabel("Percentile of Time Required")
+plt.ylabel("Normalized Turnaround Time")
+plt.title("NTAT vs Percentile of Time Required")
+plt.yscale("log")
+plt.grid(True, which="both", linestyle="--")
+plt.legend()
+plt.show()
+
+for key, df in avg_frames.items():
+    plt.plot(df["percentile"], df["tw"], marker="", label=key)
+
+plt.xlabel("Percentile of Time Required")
+plt.ylabel("Average Waiting Time")
+plt.title("TW vs Time Slice")
+plt.grid(True)
+plt.legend()
+plt.show()
