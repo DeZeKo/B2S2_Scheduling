@@ -1,0 +1,299 @@
+\documentclass[a4paper,11pt]{article}
+
+% Encoding and language
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel} % change to dutch if needed
+
+% Page layout
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{parskip}
+
+% Math and symbols
+\usepackage{amsmath,amssymb}
+
+% Figures and tables
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{array}
+
+% Links
+\usepackage[hidelinks]{hyperref}
+
+% Better lists
+\usepackage{enumitem}
+
+% Optional: nicer captions
+\usepackage[font=small,labelfont=bf]{caption}
+
+\title{\textbf{Simulation of Process Scheduling Algorithms}\\[0.5em]
+Operating Systems 1 -- Subproject 1}
+\author{
+    Student 1 Name \and
+    Student 2 Name
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-1em}
+\begin{abstract}
+This report presents a simulation-based evaluation of several CPU scheduling
+algorithms: FCFS, RR, SPN, SRT, HRRN, and MLFB. We compare their performance
+on the provided datasets using average turnaround time (TAT), normalized turnaround
+time (nTAT), waiting time ($T_w$), and percentile-based graphs. We also motivate
+our chosen MLFB parameters and compare the observed behaviour with the theoretical
+results from the lecture material.
+\end{abstract}
+
+\section{Experimental Setup}
+
+This section briefly describes the simulator and the experiments.
+
+\subsection{Implemented Scheduling Algorithms}
+We implemented the following scheduling algorithms:
+\begin{itemize}[leftmargin=1.5em]
+    \item First Come, First Serve (FCFS)
+    \item Round Robin (RR) with time slices 2, 4, and 8
+    \item Shortest Process Next (SPN)
+    \item Shortest Remaining Time (SRT)
+    \item Highest Response Ratio Next (HRRN)
+    \item Multi-Level Feedback (MLFB) with 5 levels
+\end{itemize}
+
+\subsection{Datasets}
+We used the provided XML datasets containing processes with:
+\begin{itemize}[leftmargin=1.5em]
+    \item process ID,
+    \item arrival time,
+    \item service time.
+\end{itemize}
+
+The experiments were performed on the following datasets:
+\begin{itemize}[leftmargin=1.5em]
+    \item Dataset A: 10000 processes
+    \item Dataset B: 20000 processes
+    \item Dataset C: 50000 processes
+\end{itemize}
+
+\subsection{Measured Metrics}
+For each scheduling algorithm and each dataset, we computed:
+\begin{itemize}[leftmargin=1.5em]
+    \item average turnaround time (TAT),
+    \item average normalized turnaround time (nTAT),
+    \item average waiting time ($T_w$).
+\end{itemize}
+
+In addition, for two selected datasets, we generated:
+\begin{itemize}[leftmargin=1.5em]
+    \item one $nTAT(T_s)$ graph,
+    \item one $T_w(T_s)$ graph,
+\end{itemize}
+where each point represents the arithmetic mean over one percentile of service times.
+
+\section{Design and Implementation}
+
+\subsection{Simulator Structure}
+Briefly describe the structure of your simulator:
+\begin{itemize}[leftmargin=1.5em]
+    \item how XML input is parsed,
+    \item how processes are represented,
+    \item how time progression is simulated,
+    \item how scheduling decisions are made,
+    \item how statistics are collected.
+\end{itemize}
+
+\subsection{Assumptions and Design Choices}
+Mention any relevant implementation decisions, for example:
+\begin{itemize}[leftmargin=1.5em]
+    \item tie-breaking rules,
+    \item ready queue data structures,
+    \item treatment of arrivals at the same time,
+    \item exact interpretation of one jiffy and rescheduling moments.
+\end{itemize}
+
+\section{MLFB Configuration}
+
+We used an MLFB scheduler with 5 levels. The chosen parameters are:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Parameter & Value / Description \\
+        \midrule
+        Number of levels & 5 \\
+        Time quantum per level & e.g.\ 1, 2, 4, 8, 16 \\
+        New job insertion level & e.g.\ highest priority queue \\
+        Demotion rule & e.g.\ after full quantum usage \\
+        Promotion / aging rule & e.g.\ none or periodic boost \\
+        Priority boost interval & e.g.\ every 50 jiffies / not used \\
+        \bottomrule
+    \end{tabular}
+    \caption{Chosen MLFB parameters.}
+    \label{tab:mlfb}
+\end{table}
+
+\subsection{Motivation}
+Explain why these parameters were chosen. For example, discuss the trade-off between:
+\begin{itemize}[leftmargin=1.5em]
+    \item responsiveness for short jobs,
+    \item fairness,
+    \item starvation avoidance,
+    \item approximation of SRT-like behaviour.
+\end{itemize}
+
+\section{Results}
+
+\subsection{Global Measurements}
+Insert the global averages for each algorithm and dataset.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{@{}lllll@{}}
+        \toprule
+        Dataset & Algorithm & Avg.\ TAT & Avg.\ nTAT & Avg.\ $T_w$ \\
+        \midrule
+        10000 & FCFS   &  &  &  \\
+        10000 & RR-2   &  &  &  \\
+        10000 & RR-4   &  &  &  \\
+        10000 & RR-8   &  &  &  \\
+        10000 & SPN    &  &  &  \\
+        10000 & SRT    &  &  &  \\
+        10000 & HRRN   &  &  &  \\
+        10000 & MLFB   &  &  &  \\
+        \midrule
+        20000 & FCFS   &  &  &  \\
+        20000 & RR-2   &  &  &  \\
+        20000 & RR-4   &  &  &  \\
+        20000 & RR-8   &  &  &  \\
+        20000 & SPN    &  &  &  \\
+        20000 & SRT    &  &  &  \\
+        20000 & HRRN   &  &  &  \\
+        20000 & MLFB   &  &  &  \\
+        \midrule
+        50000 & FCFS   &  &  &  \\
+        50000 & RR-2   &  &  &  \\
+        50000 & RR-4   &  &  &  \\
+        50000 & RR-8   &  &  &  \\
+        50000 & SPN    &  &  &  \\
+        50000 & SRT    &  &  &  \\
+        50000 & HRRN   &  &  &  \\
+        50000 & MLFB   &  &  &  \\
+        \bottomrule
+    \end{tabular}
+    \caption{Global measurements for all algorithms and datasets.}
+    \label{tab:global-results}
+\end{table}
+
+\subsection{Graphs for Selected Datasets}
+
+\subsubsection{Dataset X}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/datasetX_ntat.png}
+    \caption{$nTAT(T_s)$ for Dataset X.}
+    \label{fig:datasetX-ntat}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/datasetX_tw.png}
+    \caption{$T_w(T_s)$ for Dataset X.}
+    \label{fig:datasetX-tw}
+\end{figure}
+
+\subsubsection{Dataset Y}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/datasetY_ntat.png}
+    \caption{$nTAT(T_s)$ for Dataset Y.}
+    \label{fig:datasetY-ntat}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/datasetY_tw.png}
+    \caption{$T_w(T_s)$ for Dataset Y.}
+    \label{fig:datasetY-tw}
+\end{figure}
+
+\section{Evaluation and Comparison}
+
+\subsection{Overall Comparison}
+Discuss the main trends in the global measurements. For example:
+\begin{itemize}[leftmargin=1.5em]
+    \item Which algorithms minimize average TAT and nTAT?
+    \item Which algorithms favour short jobs most strongly?
+    \item How does RR change as the quantum increases?
+    \item How competitive is MLFB compared to SPN/SRT?
+\end{itemize}
+
+\subsection{Behaviour Across Service-Time Percentiles}
+Discuss the four graphs:
+\begin{itemize}[leftmargin=1.5em]
+    \item performance on short processes,
+    \item performance on long processes,
+    \item fairness,
+    \item whether some algorithms disproportionately penalize certain job sizes.
+\end{itemize}
+
+\subsection{Round Robin Analysis}
+Comment on the effect of time slice choice:
+\begin{itemize}[leftmargin=1.5em]
+    \item small quantum $\rightarrow$ more responsiveness,
+    \item large quantum $\rightarrow$ behaviour closer to FCFS,
+    \item trade-off between short-job responsiveness and waiting time for long jobs.
+\end{itemize}
+
+\subsection{MLFB Analysis}
+Evaluate whether your MLFB parameterization achieves its intended goal. Explain:
+\begin{itemize}[leftmargin=1.5em]
+    \item which scheduling behaviour it resembles most,
+    \item where it performs well,
+    \item where it performs poorly,
+    \item whether priority boosting or demotion policy had a visible effect.
+\end{itemize}
+
+\section{Comparison with Theory}
+
+Compare your results with the theoretical behaviour presented in the lectures.
+
+Points to address:
+\begin{itemize}[leftmargin=1.5em]
+    \item whether SPN and SRT outperform FCFS and RR for short jobs,
+    \item whether HRRN balances efficiency and fairness as expected,
+    \item whether MLFB approximates short-job preference,
+    \item whether the observed trends match the lecture material qualitatively.
+\end{itemize}
+
+If some results differ from theory, acknowledge this clearly and discuss possible causes, such as:
+\begin{itemize}[leftmargin=1.5em]
+    \item implementation errors,
+    \item tie-breaking effects,
+    \item different MLFB parameter settings,
+    \item plotting or averaging choices,
+    \item simulation assumptions.
+\end{itemize}
+
+\section{Conclusion}
+
+Summarize the most important findings in a few paragraphs. Keep this section focused:
+\begin{itemize}[leftmargin=1.5em]
+    \item best-performing algorithms overall,
+    \item trade-offs between fairness and efficiency,
+    \item impact of RR quantum,
+    \item lessons learned from MLFB.
+\end{itemize}
+
+% Optional
+\section*{Appendix (Optional)}
+Use this only if really necessary, for example for a small extra table or a short note
+on implementation details. Do not include source code.
+
+\end{document}
