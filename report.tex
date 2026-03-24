@@ -98,12 +98,15 @@ where each point represents the arithmetic mean over one percentile of service t
 \subsection{Simulator Structure}
 The fundamental part of our simulator is a Process, multiple processes are stored in a ProcessList
 For reading in the XML input we use a class called ProcessReader, this will return a ProcessList
+We made an abstract class Algorithm with the basics that each algorithm would need, every executer uses this via inheritance.
 Then, for each different algorithm, we have a queue and an excecuter. The excecuter follows the same 3 steps for each different algorithm.
 First, it looks for new arrivals, then it selects a next process if necessary and lastly, it executes the current process.
 The queue stores all the arrived processes and the logic for selecting the next process is also found here.
+The only algorithm that does not follow this 3 steps is MLFB, it has an extra step Post-tick logic.
 Time progression is very simple, every time the loop gets excecuted, it represents one jiffy.
 All statistics are stored in the Process itself, which means the processes are stored in a csv file and used for evaluation later.
 We used python (matplotlib) to render the graphs.
+Our graphs have been smoothed out using statsmodels.nonparametric.smoothers_lowess.
 
 \section{MLFB Configuration}
 
@@ -226,20 +229,27 @@ Discuss the main trends in the global measurements. For example:
 \end{itemize}
 
 \subsection{Behaviour Across Service-Time Percentiles}
-Discuss the four graphs:
-\begin{itemize}[leftmargin=1.5em]
-    \item performance on short processes,
-    \item performance on long processes,
-    \item fairness,
-    \item whether some algorithms disproportionately penalize certain job sizes.
-\end{itemize}
+For the shorter jobs, FCFS is the worst choice (by far), the nTAT of FCFS is very large in the lower percentiles because of the fact that very short jobs sometimes need to wait a very long time because they arrived behind longer work.
+SPN, SRT and RR with smaller quantums keep the nTAT much lower than FCFS and this shows that those algorithms favour short processes over longer ones.
+
+For medium jobs, all the curves seem to converge: RR2, RR4, RR8, HRRN and MLFB cluster together in a small band.
+This shows that these algorithms treat these jobs more balanced, no extremes are found around these.
+
+For the longest jobs, the info of the shorter jobs reverses.
+The algorithms that favour shorter jobs give the largest waiting time on long processes (see waiting time plots).
+This does not mean that algorithms with higher waiting times (like SRT, SPN and MLFB), do not necessarily give the worst nTAT for the long jobs.
+
+Overall, the graphs show that some algorithms clearly favour one kind of job sizes.
+FCFS favours long jobs, while SRT, SPN and MLFB favours the shorter ones.
+RR and HRRN are the most balanced of the algorithms, since those lie closer to the middle.
 
 \subsection{Round Robin Analysis}
-Comment on the effect of time slice choice:
-\begin{itemize}[leftmargin=1.5em]
-    \item small quantum $\rightarrow$ more responsiveness,
-    \item large quantum $\rightarrow$ behaviour closer to FCFS,
-    \item trade-off between short-job responsiveness and waiting time for long jobs.
+As we can see from the 2 different time slices used with Round Robin, choosing the time-slice is something that needs to be thought about.
+A small quantum will improve the responsiveness so short processes will benefit from this because they are able to finish quicker since it is their turn faster.
+As the quantum gets bigger, Round Robin begins to behave like FCFS as we can see in both the nTAT and waiting-time curves.
+The only reason for choosing a larger quantum is that it reduces the overhead and fragmentation but because we simulate it here, overhead is already minimal.
+To summarize, we can see the trade-off of Round Robin very clearly here.
+Smaller quanta improves the short-job responsivness but has an inefficiency for long-running processes while larger quanta has a lower overhead, but weakens the responsiveness advantage RR has over FCFS.
 \end{itemize}
 
 \subsection{MLFB Analysis}
