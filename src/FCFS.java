@@ -1,22 +1,12 @@
-public class FCFS {
-    private final ProcessList processList;
-    private final ProcessList finished;
+public class FCFS extends Algorithm {
     private final FCFSQueue queue;
-    private long time;
-    private Process running;
     
     FCFS(ProcessList pl){
-        processList = pl;
-        finished = new ProcessList();
-
+        super(pl);
         queue = new FCFSQueue();
-        running = null;
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute() {
         time = 0;
 

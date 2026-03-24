@@ -1,23 +1,13 @@
-public class SPN {
-    private final ProcessList processList;
-    private final ProcessList finished;
-
+public class SPN extends Algorithm {
     private final SPNQueue queue;
-    private long time;
-    private Process running;
 
     SPN(ProcessList pl) {
-        processList = pl;
-        finished = new ProcessList();
+        super(pl);
 
         queue = new SPNQueue();
-        running = null;
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute() {
         time = 0;
 

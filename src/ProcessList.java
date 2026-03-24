@@ -31,6 +31,10 @@ public class ProcessList {
         return !processes.isEmpty();
     }
 
+    public int size() {
+        return processes.size();
+    }
+
     public String toCSV() {
         StringBuilder sb = new StringBuilder();
         String sep = System.lineSeparator();

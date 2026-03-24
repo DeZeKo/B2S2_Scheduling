@@ -1,25 +1,15 @@
-public class RR {
-    private final ProcessList processList;
-    private final ProcessList finished;
-
+public class RR extends Algorithm {
     private final RRQueue queue;
     private final int quantum;
-    private long time;
-    private Process running;
 
     RR(ProcessList pl, int q){
-        processList = pl;
-        finished = new ProcessList();
+        super(pl);
 
         quantum = q;
         queue = new RRQueue();
-        running = null;
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute(){
         time = 0;
         int q_prog = 0;

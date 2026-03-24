@@ -1,23 +1,12 @@
-public class SRT {
-    private final ProcessList processList;
-    private final ProcessList finished;
-
+public class SRT extends Algorithm {
     private final SRTQueue queue;
-    private long time;
-    private Process running;
 
     SRT(ProcessList pl) {
-        this.processList = pl;
-        finished = new ProcessList();
-
+        super(pl);
         this.queue = new SRTQueue();
-        this.running = null;
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute() {
         time = 0;
 

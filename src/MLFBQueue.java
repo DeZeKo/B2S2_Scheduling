@@ -1,21 +1,22 @@
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 public class MLFBQueue {
-    private final Queue<Process>[] queues;
+    private final List<Queue<Process>> queues;
     private final int[] quantums;
 
-    @SuppressWarnings("unchecked")
     MLFBQueue(int[] quantums) {
         if (quantums == null || quantums.length != 5) {
             throw new IllegalArgumentException("MLFB must have exactly 5 levels.");
         }
 
         this.quantums = quantums.clone();
-        this.queues = new ArrayDeque[5];
+        this.queues = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            queues[i] = new ArrayDeque<>();
+            queues.add(new ArrayDeque<>());
         }
     }
 
@@ -30,17 +31,17 @@ public class MLFBQueue {
     }
 
     public void addNewProcess(Process p) {
-        queues[0].offer(p);
+        queues.get(0).offer(p);
     }
 
     public void addProcess(Process p, int level) {
-        queues[level].offer(p);
+        queues.get(level).offer(p);
     }
 
     public QueueEntry getNextProcess() {
-        for (int i = 0; i < queues.length; i++) {
-            if (!queues[i].isEmpty()) {
-                return new QueueEntry(queues[i].poll(), i);
+        for (int i = 0; i < queues.size(); i++) {
+            if (!queues.get(i).isEmpty()) {
+                return new QueueEntry(queues.get(i).poll(), i);
             }
         }
         return null;
@@ -48,7 +49,7 @@ public class MLFBQueue {
 
     public boolean hasHigherPriorityProcess(int currentLevel) {
         for (int i = 0; i < currentLevel; i++) {
-            if (!queues[i].isEmpty()) {
+            if (!queues.get(i).isEmpty()) {
                 return true;
             }
         }
@@ -56,7 +57,7 @@ public class MLFBQueue {
     }
 
     public int demoteLevel(int currentLevel) {
-        if (currentLevel < queues.length - 1) {
+        if (currentLevel < queues.size() - 1) {
             return currentLevel + 1;
         }
         return currentLevel;
@@ -75,13 +76,21 @@ public class MLFBQueue {
         return true;
     }
 
+    public int size() {
+        int total = 0;
+        for (Queue<Process> q : queues) {
+            total += q.size();
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MLFBQueue{");
-        for (int i = 0; i < queues.length; i++) {
-            sb.append("L").append(i).append("=").append(queues[i]);
-            if (i < queues.length - 1) {
+        for (int i = 0; i < queues.size(); i++) {
+            sb.append("L").append(i).append("=").append(queues.get(i));
+            if (i < queues.size() - 1) {
                 sb.append(", ");
             }
         }

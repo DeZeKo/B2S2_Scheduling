@@ -1,22 +1,12 @@
-public class HRRN {
-    private final ProcessList processList;
-    private final ProcessList finished;
+public class HRRN extends Algorithm {
     private final HRRNQueue queue;
-    private long time;
-    private Process running;
 
     HRRN(ProcessList pl) {
-        this.processList = pl;
-        this.finished = new ProcessList();
-
-        this.queue = new HRRNQueue();
-        this.running = null;
+        super(pl);
+        queue = new HRRNQueue();
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute() {
         time = 0;
 

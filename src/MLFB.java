@@ -1,38 +1,29 @@
-public class MLFB {
-    private final ProcessList processList;
-    private final ProcessList finished;
+public class MLFB extends Algorithm{
     private final MLFBQueue queue;
-
-    private long time;
-    private Process running;
     private int runningLevel;
     private int quantumUsed;
 
     MLFB(ProcessList pl, int[] quantums) {
-        this.processList = pl;
-        this.finished = new ProcessList();
-        this.queue = new MLFBQueue(quantums);
+        super(pl);
 
-        this.running = null;
-        this.runningLevel = -1;
-        this.quantumUsed = 0;
+        queue = new MLFBQueue(quantums);
+        runningLevel = -1;
+        quantumUsed = 0;
     }
 
-    public String resultAsCSV() {
-        return finished.toCSV();
-    }
-
+    @Override
     public void execute() {
         time = 0;
 
         while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
 
-            // 1. New arrivals: always enter top queue
+            // 1. New arrivals
             while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)) {
                 queue.addNewProcess(processList.popNextProcess());
             }
 
-            // 2. Finish current process if done
+            // 2. Select next process
+
             if (running != null && running.isFinished()) {
                 running.setFinishTime(time);
                 finished.addProcess(running);
@@ -40,16 +31,12 @@ public class MLFB {
                 runningLevel = -1;
                 quantumUsed = 0;
             }
-
-            // 3. Preempt if a higher-priority queue has work
             if (running != null && queue.hasHigherPriorityProcess(runningLevel)) {
                 queue.addProcess(running, runningLevel);
                 running = null;
                 runningLevel = -1;
                 quantumUsed = 0;
             }
-
-            // 4. If CPU idle, dispatch next process
             if (running == null) {
                 MLFBQueue.QueueEntry next = queue.getNextProcess();
                 if (next != null) {
@@ -59,15 +46,16 @@ public class MLFB {
                 }
             }
 
-            // 5. Execute one tick
+            // 3. Execute
+
             time += 1;
             if (running != null) {
                 running.execute(1);
                 quantumUsed += 1;
             }
 
-            // 6. If process finished exactly after this tick, loop will handle it next round
-            // 7. If quantum expired and process not finished, demote
+            // 4. Post-tick logic
+
             if (running != null && !running.isFinished() && quantumUsed >= queue.getQuantum(runningLevel)) {
                 int nextLevel = queue.demoteLevel(runningLevel);
                 queue.addProcess(running, nextLevel);
