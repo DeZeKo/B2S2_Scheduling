@@ -18,6 +18,7 @@ public class Process {
         this.arrivalTime = other.arrivalTime;
         this.serviceTime = other.serviceTime;
         this.runningTime = 0;
+        this.finishTime = -1;
     }
 
     public int getProcessID() {
@@ -49,6 +50,9 @@ public class Process {
     }
 
     public void execute(long time) {
+        if (time < 0) {
+            throw new IllegalArgumentException("Execution time must be non-negative.");
+        }
         this.runningTime += time;
     }
 

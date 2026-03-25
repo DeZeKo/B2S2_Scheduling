@@ -1,11 +1,11 @@
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class RRQueue {
     private final Queue<Process> queue;
 
     RRQueue(){
-        this.queue = new LinkedList<>();
+        this.queue = new ArrayDeque<>();
     }
 
     public void addProcess(Process p){

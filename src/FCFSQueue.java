@@ -1,11 +1,11 @@
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class FCFSQueue {
     private final Queue<Process> queue;
 
     FCFSQueue(){
-        this.queue = new LinkedList<>();
+        this.queue = new ArrayDeque<>();
     }
 
     public void addProcess(Process p){
