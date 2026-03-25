@@ -33,7 +33,7 @@
 Operating Systems 1 -- Scheduling}
 \author{
     Decalf Kobe \and
-    Zenn De Craene
+    De Craene Zenn
 }
 \date{\today}
 
@@ -43,15 +43,12 @@ Operating Systems 1 -- Scheduling}
 
 \vspace{-1em}
 \begin{abstract}
-In this report, we will present our findings achieved by creating and simulating different scheduling algorithms. 
-We implemented FCFS, RR, SPN, SRT, HRRN and MLFB. The metrics for performance are turnaround time (TAT), normalized TAT and average waiting time.
+In this report we present our findings achieved by creating and simulating different scheduling algorithms. 
+We implemented FCFS, RR, SPN, SRT, HRRN and MLFB. The metrics for performance are turnaround time (TAT), normalized TAT (nTAT) and the average waiting time.
 The chosen parameters for MLFB will also be justified.
 \end{abstract}
 
 \section{Experimental Setup}
-
-This section briefly describes the simulator and the experiments.
-
 \subsection{Implemented Scheduling Algorithms}
 We implemented the following scheduling algorithms:
 \begin{itemize}[leftmargin=1.5em]
@@ -86,7 +83,7 @@ For each scheduling algorithm and each dataset, we computed:
     \item average waiting time ($T_w$).
 \end{itemize}
 
-In addition, for two selected datasets, we generated:
+In addition, for two selected datasets, we created:
 \begin{itemize}[leftmargin=1.5em]
     \item one $nTAT(T_s)$ graph,
     \item one $T_w(T_s)$ graph,
@@ -96,17 +93,16 @@ where each point represents the arithmetic mean over one percentile of service t
 \section{Design and Implementation}
 
 \subsection{Simulator Structure}
-The fundamental part of our simulator is a Process, multiple processes are stored in a ProcessList
-For reading in the XML input we use a class called ProcessReader, this will return a ProcessList
-We made an abstract class Algorithm with the basics that each algorithm would need, every executer uses this via inheritance.
-Then, for each different algorithm, we have a queue and an excecuter. The excecuter follows the same 3 steps for each different algorithm.
+The fundamental part of our simulator is a \emph{Process}, multiple processes are stored in a \emph{ProcessList}.
+For reading in the XML input we use a class called \emph{ProcessReader}, which returns a \emph{ProcessList}.
+We use an abstract class \emph{Algorithm} with the basics that each algorithm would need, every executor uses this via inheritance.
+Then, for each different algorithm, we have a queue and an executor. The executor follows the same 3 steps for each different algorithm.
 First, it looks for new arrivals, then it selects a next process if necessary and lastly, it executes the current process.
 The queue stores all the arrived processes and the logic for selecting the next process is also found here.
-The only algorithm that does not follow this 3 steps is MLFB, it has an extra step Post-tick logic.
-Time progression is very simple, every time the loop gets excecuted, it represents one jiffy.
-All statistics are stored in the Process itself, which means the processes are stored in a csv file and used for evaluation later.
-We used python (matplotlib) to render the graphs.
-Our graphs have been smoothed out using statsmodels.nonparametric.smoothers_lowess.
+Time progression in our simulator is very simple, every time the loop gets executed, it represents one jiffy.
+All statistics are stored in the \emph{Process} itself, which means the processes are stored in a csv file and used for evaluation later.
+We used \texttt{python} (\texttt{matplotlib}) to render the graphs.
+Our graphs have been smoothed out using \texttt{statsmodels.nonparametric.smoothers\_lowess}.
 
 \section{MLFB Configuration}
 
@@ -119,11 +115,10 @@ We used an MLFB scheduler with 5 levels. The chosen parameters are:
         Parameter & Value / Description \\
         \midrule
         Number of levels & 5 \\
-        Time quantum per level & e.g.\ 1, 2, 4, 8, 16 \\
-        New job insertion level & e.g.\ highest priority queue \\
-        Demotion rule & e.g.\ after full quantum usage \\
-        Promotion / aging rule & e.g.\ none or periodic boost \\
-        Priority boost interval & e.g.\ every 50 jiffies / not used \\
+        Time quantum per level & - 1, 2, 4, 8, 16 \\ & - 8, 16, 32, 64, 128 \\
+        New process level & highest priority queue \\
+        Demotion rule & after full quantum usage \\
+        Promotion rule & not implemented \\
         \bottomrule
     \end{tabular}
     \caption{Chosen MLFB parameters.}
@@ -131,18 +126,19 @@ We used an MLFB scheduler with 5 levels. The chosen parameters are:
 \end{table}
 
 \subsection{Motivation}
-Explain why these parameters were chosen. For example, discuss the trade-off between:
-\begin{itemize}[leftmargin=1.5em]
-    \item responsiveness for short jobs,
-    \item fairness,
-    \item starvation avoidance,
-    \item approximation of SRT-like behaviour.
-\end{itemize}
+The MLFB scheduler uses 5 levels. We used two versions of this algorithm.
+For the first version we used \texttt{(1, 2, 4, 8, 16)} for the time quantums, as a baseline.
+The optimal configuration with our algorithm was \texttt{(8, 16, 32, 64, 128)}.
+This decreases the normalized turnaround time and average waiting time for shorter processes 
+while not increasing the average waiting time for long processes too much.
+New processes are added to the highest priority queue and the demotion rule we used is when the process reaches full quantum usage.
+This is standard.
+We didn't implement a promotion rule, which could lead to starvation of longer processes
+if lots of short processes keep arriving.
 
 \section{Results}
 
 \subsection{Global Measurements}
-Insert the global averages for each algorithm and dataset.
 
 \begin{table}[H]
     \centering
@@ -220,17 +216,16 @@ Insert the global averages for each algorithm and dataset.
 \section{Evaluation and Comparison}
 
 \subsection{Overall Comparison}
-Discuss the main trends in the global measurements. For example:
-\begin{itemize}[leftmargin=1.5em]
-    \item Which algorithms minimize average TAT and nTAT?
-    \item Which algorithms favour short jobs most strongly?
-    \item How does RR change as the quantum increases?
-    \item How competitive is MLFB compared to SPN/SRT?
-\end{itemize}
+The algorithm that minimizes both nTAT and $T_w$ is SRT.
+For short and medium-length processes the nTAT is noticeably shorter than all other algorithms.
+Only for long processes (that have a percentile of time greater than 90\%) is the nTAT and $T_w$ better.
+From the graph with the normalized turnaround time we derive SRT and MLFB strongly favour short jobs.
+The average waiting time for all algorithms increase with the percentile of time required, except for FCFS. The waiting time for that algorithm is constant.
+
 
 \subsection{Behaviour Across Service-Time Percentiles}
 For the shorter jobs, FCFS is the worst choice (by far), the nTAT of FCFS is very large in the lower percentiles because of the fact that very short jobs sometimes need to wait a very long time because they arrived behind longer work.
-SPN, SRT and RR with smaller quantums keep the nTAT much lower than FCFS and this shows that those algorithms favour short processes over longer ones.
+SPN, SRT and RR with smaller quanta keep the nTAT much lower than FCFS and this shows that those algorithms favour short processes over longer ones.
 
 For medium jobs, all the curves seem to converge: RR2, RR4, RR8, HRRN and MLFB cluster together in a small band.
 This shows that these algorithms treat these jobs more balanced, no extremes are found around these.
@@ -249,47 +244,23 @@ A small quantum will improve the responsiveness so short processes will benefit 
 As the quantum gets bigger, Round Robin begins to behave like FCFS as we can see in both the nTAT and waiting-time curves.
 The only reason for choosing a larger quantum is that it reduces the overhead and fragmentation but because we simulate it here, overhead is already minimal.
 To summarize, we can see the trade-off of Round Robin very clearly here.
-Smaller quanta improves the short-job responsivness but has an inefficiency for long-running processes while larger quanta has a lower overhead, but weakens the responsiveness advantage RR has over FCFS.
-\end{itemize}
+Smaller quanta improves the short-job responsiveness but has an inefficiency for long-running processes while larger quanta has a lower overhead, but weakens the responsiveness advantage RR has over FCFS.
 
-\subsection{MLFB Analysis}
-Evaluate whether your MLFB parameterization achieves its intended goal. Explain:
-\begin{itemize}[leftmargin=1.5em]
-    \item which scheduling behaviour it resembles most,
-    \item where it performs well,
-    \item where it performs poorly,
-    \item whether priority boosting or demotion policy had a visible effect.
-\end{itemize}
 
-\section{Comparison with Theory}
+\section{Comparison with Theory and Conclusion}
 
-Compare your results with the theoretical behaviour presented in the lectures.
+When we compare the results of our simulation with the theory we see the graphs generally follow the same trends. 
+The biggest difference is for MLFB the theoretical graph goes to infinity for short processes, while our version stays around zero.
+This happens because we use smaller time quanta.
+The theoretical graph of MLFB also shows less 'steps'.
+These would disappear when using more levels.
+For the normalized turnaround time all theoretical algorithms except SRT go to infinity for very short processes, this is not as extreme with our findings.
+The waiting time in the theoretical algorithms goes to infinity for long processes except for FCFS, this is also less extreme for us.
 
-Points to address:
-\begin{itemize}[leftmargin=1.5em]
-    \item whether SPN and SRT outperform FCFS and RR for short jobs,
-    \item whether HRRN balances efficiency and fairness as expected,
-    \item whether MLFB approximates short-job preference,
-    \item whether the observed trends match the lecture material qualitatively.
-\end{itemize}
-
-If some results differ from theory, acknowledge this clearly and discuss possible causes, such as:
-\begin{itemize}[leftmargin=1.5em]
-    \item implementation errors,
-    \item tie-breaking effects,
-    \item different MLFB parameter settings,
-    \item plotting or averaging choices,
-    \item simulation assumptions.
-\end{itemize}
-
-\section{Conclusion}
-
-Summarize the most important findings in a few paragraphs. Keep this section focused:
-\begin{itemize}[leftmargin=1.5em]
-    \item best-performing algorithms overall,
-    \item trade-offs between fairness and efficiency,
-    \item impact of RR quantum,
-    \item lessons learned from MLFB.
-\end{itemize}
+The best performing algorithm is SRT. It beats all other algorithms in both normalized turnaround time and average waiting time,
+except for processes that use more than 90 percent of time required.
+For those processes FCFS, HRRN and SPN perform better.
+The current implementation of SRT could lead to starvation for those processes. 
+This is a known trade-off in the scheduling world: fairness vs efficiency.  
 
 \end{document}

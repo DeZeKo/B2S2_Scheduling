@@ -16,7 +16,7 @@ public class Main {
             SRT srt = new SRT(new ProcessList(pl));
             HRRN hrrn = new HRRN(new ProcessList(pl));
             MLFB mlfb1 = new MLFB(new ProcessList(pl), new int[]{1, 2, 4, 8, 16});
-            MLFB mlfb2 = new MLFB(new ProcessList(pl), new int[]{2, 4, 8, 16, 32});
+            MLFB mlfb2 = new MLFB(new ProcessList(pl), new int[]{8, 16, 32, 64, 128});
 
             fcfs.execute();
             rr2.execute();

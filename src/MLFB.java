@@ -15,33 +15,42 @@ public class MLFB extends Algorithm{
     public void execute() {
         time = 0;
 
+        int nextLevel;
+        MLFBQueue.QueueEntry next;
+
         while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
 
             // 1. New arrivals
+
             while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)) {
                 queue.addNewProcess(processList.popNextProcess());
             }
 
             // 2. Select next process
 
-            if (running != null && running.isFinished()) {
-                running.setFinishTime(time);
-                finished.addProcess(running);
-                running = null;
-                runningLevel = -1;
-                quantumUsed = 0;
-            }
-            if (running != null && queue.hasHigherPriorityProcess(runningLevel)) {
-                queue.addProcess(running, runningLevel);
-                running = null;
-                runningLevel = -1;
-                quantumUsed = 0;
-            }
-            if (running == null) {
-                MLFBQueue.QueueEntry next = queue.getNextProcess();
+            if (running == null || running.isFinished() || quantumUsed >= queue.getQuantum(runningLevel) || queue.hasHigherPriorityProcess(runningLevel)) {
+                if (running != null) {
+                    if (running.isFinished()) {
+                        running.setFinishTime(time);
+                        finished.addProcess(running);
+                    }
+                    else if (quantumUsed >= queue.getQuantum(runningLevel)) {
+                        nextLevel = queue.demoteLevel(runningLevel);
+                        queue.addProcess(running, nextLevel);
+                    } 
+                    else if (queue.hasHigherPriorityProcess(runningLevel)) {
+                        queue.addProcess(running, runningLevel);
+                    }
+                }
+
+                next = queue.getNextProcess();
                 if (next != null) {
                     running = next.process;
                     runningLevel = next.level;
+                    quantumUsed = 0;
+                } else {
+                    running = null;
+                    runningLevel = -1;
                     quantumUsed = 0;
                 }
             }
@@ -52,17 +61,7 @@ public class MLFB extends Algorithm{
             if (running != null) {
                 running.execute(1);
                 quantumUsed += 1;
-            }
-
-            // 4. Post-tick logic
-
-            if (running != null && !running.isFinished() && quantumUsed >= queue.getQuantum(runningLevel)) {
-                int nextLevel = queue.demoteLevel(runningLevel);
-                queue.addProcess(running, nextLevel);
-                running = null;
-                runningLevel = -1;
-                quantumUsed = 0;
-            }
+            }            
         }
     }
 }

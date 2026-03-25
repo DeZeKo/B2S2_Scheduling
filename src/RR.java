@@ -12,6 +12,7 @@ public class RR extends Algorithm {
     @Override
     public void execute(){
         time = 0;
+        
         int q_prog = 0;
 
         while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
