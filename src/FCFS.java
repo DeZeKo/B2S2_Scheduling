@@ -13,13 +13,11 @@ public class FCFS extends Algorithm {
         while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
 
             // 1. New arrivals
-
             while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)){
                 queue.addProcess(processList.popNextProcess());
             }
 
             // 2. Select next process
-
             if (running == null || running.isFinished()){
                 if (running != null) {
                     running.setFinishTime(time);
@@ -29,7 +27,6 @@ public class FCFS extends Algorithm {
             }
 
             // 3. Execute
-            
             time += 1;
             if (running != null) {
                 running.execute(1);

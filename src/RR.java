@@ -18,13 +18,11 @@ public class RR extends Algorithm {
         while (processList.hasNextProcess() || !queue.isEmpty() || running != null) {
 
             // 1. New arrivals
-            
             while (processList.peekNextProcess() != null && processList.peekNextProcess().isArrived(time)){
                 queue.addProcess(processList.popNextProcess());
             }
 
             // 2. Select next process
-
             if (running == null || running.isFinished() || q_prog >= quantum) {
                 if (running != null) {
                     if (!running.isFinished()) {
@@ -39,7 +37,6 @@ public class RR extends Algorithm {
             }
 
             // 3. Execute
-
             time += 1;
             if (running != null) {
                 running.execute(1);
