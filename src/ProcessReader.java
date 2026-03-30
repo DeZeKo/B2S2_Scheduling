@@ -11,7 +11,7 @@ public class ProcessReader {
         this.filename = filename;
     }
     public ProcessList read() throws Exception{
-        ProcessList pl = new ProcessList();
+        ProcessList processlist = new ProcessList();
         File file = new File(filename);
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
         doc.getDocumentElement().normalize();
@@ -25,9 +25,9 @@ public class ProcessReader {
             int arrivaltime = parseInt(process.getElementsByTagName("arrivaltime").item(0).getTextContent());
             int servicetime = parseInt(process.getElementsByTagName("servicetime").item(0).getTextContent());
             Process p = new Process(pid, arrivaltime, servicetime);
-            pl.addProcess(p);
+            processlist.addProcess(p);
         }
-        return pl;
+        return processlist;
     }
 }
 

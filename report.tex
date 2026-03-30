@@ -94,15 +94,15 @@ where each point represents the arithmetic mean over one percentile of service t
 
 \subsection{Simulator Structure}
 The fundamental part of our simulator is a \emph{Process}, multiple processes are stored in a \emph{ProcessList}.
-For reading in the XML input we use a class called \emph{ProcessReader}, which returns a \emph{ProcessList}.
-We use an abstract class \emph{Algorithm} with the basics that each algorithm would need, every executor uses this via inheritance.
-Then, for each different algorithm, we have a queue and an executor. The executor follows the same 3 steps for each different algorithm.
+In order to read in the XML input we used a class called \emph{ProcessReader}, which returns a \emph{ProcessList}.
+For each different algorithm, we have a queue and an executor.
+We used an abstract class \emph{Algorithm} with the basic implementations each algorithm-executor needs.
+Every executor uses this \emph{Algorithm} class via inheritance and follows the same 3 steps.
 First, it looks for new arrivals, then it selects a next process if necessary and lastly, it executes the current process.
-The queue stores all the arrived processes and the logic for selecting the next process is also found here.
-Time progression in our simulator is very simple, every time the loop gets executed, it represents one jiffy.
+The queue stores all the arrived processes as well as the logic for selecting the next process.
+Time progression in our simulator is very simple; every time the loop gets executed, it represents one jiffy.
 All statistics are stored in the \emph{Process} itself, which means the processes are stored in a csv file and used for evaluation later.
-We used \texttt{python} (\texttt{matplotlib}) to render the graphs.
-Our graphs have been smoothed out using \texttt{statsmodels.nonparametric.smoothers\_lowess}.
+Finally, we used \texttt{python} (\texttt{matplotlib}) to render the graphs which have been smoothed out using \texttt{statsmodels.nonparametric.smoothers\_lowess}.
 
 \section{MLFB Configuration}
 
@@ -126,15 +126,13 @@ We used an MLFB scheduler with 5 levels. The chosen parameters are:
 \end{table}
 
 \subsection{Motivation}
-The MLFB scheduler uses 5 levels. We used two versions of this algorithm.
+We made 2 version of the MLFB sceduler with 5 levels.
 For the first version we used \texttt{(1, 2, 4, 8, 16)} for the time quantums, as a baseline.
 The optimal configuration with our algorithm was \texttt{(8, 16, 32, 64, 128)}.
 This decreases the normalized turnaround time and average waiting time for shorter processes 
 while not increasing the average waiting time for long processes too much.
-New processes are added to the highest priority queue and the demotion rule we used is when the process reaches full quantum usage.
-This is standard.
-We didn't implement a promotion rule, which could lead to starvation of longer processes
-if lots of short processes keep arriving.
+New processes are added to the highest priority queue and the demotion rule we used gets activated when the process reaches full quantum usage.
+We didn't implement a promotion rule, which could lead to starvation of longer processes if lots of short processes keep arriving.
 
 \section{Results}
 
@@ -221,7 +219,6 @@ For short and medium-length processes the nTAT is noticeably shorter than all ot
 Only for long processes (that have a percentile of time greater than 90\%) is the nTAT and $T_w$ better.
 From the graph with the normalized turnaround time we derive SRT and MLFB strongly favour short jobs.
 The average waiting time for all algorithms increase with the percentile of time required, except for FCFS. The waiting time for that algorithm is constant.
-
 
 \subsection{Behaviour Across Service-Time Percentiles}
 For the shorter jobs, FCFS is the worst choice (by far), the nTAT of FCFS is very large in the lower percentiles because of the fact that very short jobs sometimes need to wait a very long time because they arrived behind longer work.

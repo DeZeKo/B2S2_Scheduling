@@ -11,6 +11,11 @@ public class MLFB extends Algorithm{
         quantumUsed = 0;
     }
 
+    private boolean rescedule_needed(){
+        // rescedule can happen if no process running, process finished, process used quantum or higher priority process arrived
+        return running == null || running.isFinished() || quantumUsed >= queue.getQuantum(runningLevel) || queue.hasHigherPriorityProcess(runningLevel);
+    }
+
     @Override
     public void execute() {
         time = 0;
@@ -26,8 +31,7 @@ public class MLFB extends Algorithm{
             }
 
             // 2. Select next process
-            // rescedule can happen if no process running, process finished, process used quantum or higher priority process arrived
-            if (running == null || running.isFinished() || quantumUsed >= queue.getQuantum(runningLevel) || queue.hasHigherPriorityProcess(runningLevel)) {
+            if (rescedule_needed()) {
                 if (running != null) {
                     if (running.isFinished()) {         // case 1: process finished
                         running.setFinishTime(time);
